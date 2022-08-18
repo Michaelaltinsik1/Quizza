@@ -1,37 +1,27 @@
-import { useState } from "react";
-
 interface AnswerProps {
   children: React.ReactNode;
   correctAnswer: string;
+  handleClick: Function;
+  isClicked: boolean;
 }
 
-enum Guess {
-  CORRECT,
-  INCORRECT,
-  NOTGUESSED,
-}
-
-const AnswerOption = ({ children, correctAnswer }: AnswerProps) => {
-  const [GuessState, setGuessState] = useState<Guess>(Guess.NOTGUESSED);
-
-  function handleClick(correctAnswer: string, children: React.ReactNode) {
-    if (children === correctAnswer) {
-      setGuessState(Guess.CORRECT);
-    } else {
-      setGuessState(Guess.INCORRECT);
-    }
-  }
+const AnswerOption = ({
+  children,
+  correctAnswer,
+  handleClick,
+  isClicked,
+}: AnswerProps) => {
   return (
     <button
-      onClick={() => handleClick(correctAnswer, children)}
-      // className={`border-solid border-2 border-black rounded-md p-3 m-3`}
-      className={
-        GuessState === Guess.CORRECT
-          ? `bg-green-400`
-          : GuessState === Guess.INCORRECT
-          ? `bg-red-600`
-          : ""
-      }
+      onClick={() => handleClick()}
+      className={`border-solid border-2 border-black rounded-md px-2 py-2 m-1 min-h-[4.5rem] font-mono font-black
+          ${
+            correctAnswer === children && isClicked
+              ? `bg-green-400`
+              : correctAnswer !== children && isClicked
+              ? `bg-red-400`
+              : ""
+          }`}
     >
       {children}
     </button>

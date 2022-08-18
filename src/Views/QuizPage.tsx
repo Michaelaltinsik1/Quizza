@@ -2,6 +2,7 @@ import { quizType } from "../interfaces";
 import AnswerOptionsList from "../Components/AnswerOptionsList";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import Timer from "../Components/timer";
 interface quizPageProps {
   quizState: quizType;
 }
@@ -11,8 +12,15 @@ interface quizSetupDataType {
   question: string;
 }
 const QuizPage = ({ quizState }: quizPageProps) => {
+  const [currQuestionCounter, incrementQuestionCounter] = useState<number>(1);
   const [quizSetUpData, setQuizSetupData] =
     useState<Array<quizSetupDataType> | null>(null);
+
+  function updateQuestionCounter() {
+    if (currQuestionCounter < parseInt(quizState.amount)) {
+      incrementQuestionCounter(() => currQuestionCounter + 1);
+    }
+  }
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -47,8 +55,10 @@ const QuizPage = ({ quizState }: quizPageProps) => {
       </header>
       <main className="py-10">
         <article>
-          <p>{quizState.time}</p>
-          <p>Question: 1/{quizState.amount}</p>
+          <Timer count={parseInt(quizState.time)} />
+          <p>
+            Question: {currQuestionCounter}/{quizState.amount}
+          </p>
           <p>{quizSetUpData ? quizSetUpData[0].question : ""}</p>
         </article>
         <article>
@@ -56,10 +66,13 @@ const QuizPage = ({ quizState }: quizPageProps) => {
           {quizSetUpData && (
             <AnswerOptionsList
               AnswerOptions={[
-                quizSetUpData[0].correctAnswer,
-                ...quizSetUpData[0].incorrectAnswers,
+                quizSetUpData[currQuestionCounter - 1].correctAnswer,
+                ...quizSetUpData[currQuestionCounter - 1].incorrectAnswers,
               ]}
-              correctAnswer={quizSetUpData[0].correctAnswer}
+              correctAnswer={
+                quizSetUpData[currQuestionCounter - 1].correctAnswer
+              }
+              updateQuestionCounter={updateQuestionCounter}
             />
           )}
         </article>
