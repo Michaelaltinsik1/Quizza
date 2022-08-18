@@ -1,5 +1,3 @@
-import { useEffect } from "react";
-
 interface DropDownProps {
   options: string[];
   category: string;

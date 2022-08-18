@@ -1,14 +1,12 @@
 import { useState } from "react";
 import DropDown from "../Components/DropdownItem";
-
-interface quizType {
-  username: string;
-  category: string;
-  amount: string;
-  time: string;
-  difficulty: string;
+import { quizType } from "../interfaces";
+interface homePageProps {
+  getQuizState: Function;
 }
-const HomePage = () => {
+
+const HomePage = ({ getQuizState }: homePageProps) => {
+  const [isUsernameValid, setIsUsernameValid] = useState<boolean>(true);
   const [quizState, setQuizState] = useState<quizType>({
     username: "",
     category: "History",
@@ -16,10 +14,42 @@ const HomePage = () => {
     time: "15",
     difficulty: "None",
   });
+  const categories = [
+    "History",
+    "Music",
+    "Science",
+    "Geography",
+    "General knowledge",
+    "Food & Drinks",
+    "Film & TV",
+    "Art & Literature",
+    "Sport & Leisure",
+    "Society & Culture",
+  ];
+  const questionCounts = ["10", "15", "20", "25", "30"];
+  const questionCounters = ["15", "30", "45", "60"];
+  const difficulties = ["None", "Easy", "Medium", "Hard"];
+
   function handleChange(value: string, key: string) {
     let quizObject: quizType = { ...quizState };
     quizObject[key as keyof typeof quizState] = value;
     setQuizState(quizObject);
+  }
+
+  function validateForm() {
+    if (
+      categories.includes(quizState.category) &&
+      questionCounts.includes(quizState.amount) &&
+      questionCounters.includes(quizState.time) &&
+      difficulties.includes(quizState.difficulty)
+    ) {
+      if (quizState.username.length < 3) {
+        setIsUsernameValid(false);
+      } else {
+        setIsUsernameValid(true);
+        getQuizState(quizState);
+      }
+    }
   }
   return (
     <div>
@@ -34,44 +64,34 @@ const HomePage = () => {
             onChange={(e) => handleChange(e.target.value, "username")}
           />
         </label>
+        {!isUsernameValid && <p className="text-red-700">Invalid username</p>}
         <DropDown
           category={"Categories"}
-          options={[
-            "History",
-            "Music",
-            "Science",
-            "Geography",
-            "General knowledge",
-            "Food & Drinks",
-            "Film & TV",
-            "Art & Literature",
-            "Sport & Leisure",
-            "Society & Culture",
-          ]}
+          options={categories}
           handleChange={handleChange}
         />
         <DropDown
           category={"Question Amount"}
-          options={["10", "15", "20", "25", "30"]}
+          options={questionCounts}
           handleChange={handleChange}
         />
         <DropDown
           category={"Question Timer"}
-          options={["15", "30", "45", "60"]}
+          options={questionCounters}
           handleChange={handleChange}
         />
         <DropDown
           category={"Difficulty"}
-          options={["None", "Easy", "Medium", "Hard"]}
+          options={difficulties}
           handleChange={handleChange}
         />
         <button
           type="submit"
           className="py-2 px-6 border border-black rounded-xl"
+          onClick={validateForm}
         >
           Submit
         </button>
-        <p>{quizState.username}</p>
       </form>
     </div>
   );
