@@ -4,12 +4,14 @@ interface AnswerProps {
   AnswerOptions: Array<string>;
   correctAnswer: string;
   updateQuestionCounter: Function;
+  handleReset: Function;
 }
 
 const AnswerOptionsList = ({
   AnswerOptions,
   correctAnswer,
   updateQuestionCounter,
+  handleReset,
 }: AnswerProps) => {
   const [isClicked, setClicked] = useState(false);
   const shuffleArray = (array: Array<string>) => {
@@ -25,6 +27,7 @@ const AnswerOptionsList = ({
     shuffleArray(AnswerOptions);
   }
   function handleClick() {
+    handleReset();
     setClicked(() => true);
     setTimeout(() => {
       setClicked(() => false);

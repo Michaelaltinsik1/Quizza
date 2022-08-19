@@ -20,7 +20,7 @@ const HomePage = ({ getQuizState }: homePageProps) => {
     "Science",
     "Geography",
     "General knowledge",
-    "Food & Drinks",
+    "Food & Drink",
     "Film & TV",
     "Art & Literature",
     "Sport & Leisure",

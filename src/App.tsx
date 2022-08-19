@@ -19,10 +19,21 @@ function App() {
     setQuizState(newState);
     navigate(`quiz`);
   };
+  function handleReturnHomePage() {
+    navigate(`/`);
+  }
   return (
     <Routes>
       <Route path="/" element={<HomePage getQuizState={getQuizState} />} />
-      <Route path="quiz" element={<QuizPage quizState={quizState} />} />
+      <Route
+        path="quiz"
+        element={
+          <QuizPage
+            quizState={quizState}
+            handleReturnHomePage={handleReturnHomePage}
+          />
+        }
+      />
       <Route path="*" element={<NoPageFound />} />
     </Routes>
   );

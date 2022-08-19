@@ -12,9 +12,9 @@ const AnswerOption = ({
   isClicked,
 }: AnswerProps) => {
   return (
-    <button
+    <div
       onClick={() => handleClick()}
-      className={`border-solid border-2 border-black rounded-md px-2 py-2 m-1 min-h-[4.5rem] font-mono font-black
+      className={`flex items-center justify-center text-center border-solid border-2 border-black rounded-md px-2 py-2 m-1 min-h-[4.5rem] font-mono font-black
           ${
             correctAnswer === children && isClicked
               ? `bg-green-400`
@@ -24,7 +24,7 @@ const AnswerOption = ({
           }`}
     >
       {children}
-    </button>
+    </div>
   );
 };
 export default AnswerOption;
