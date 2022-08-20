@@ -16,7 +16,7 @@ interface quizSetupDataType {
 const QuizPage = ({ quizState, handleReturnHomePage }: quizPageProps) => {
   // const [currCorrectAnswersCounter, setCurrCorrectAnswersCounter] =
   //   useState<number>(0);
-
+  console.log("rerender");
   const currCorrectAnswersCounter = useRef<number>(0);
   const [isGameOver, setGameOver] = useState<boolean>(false);
   // const [isReset, setReset] = useState<boolean>(false);
@@ -60,14 +60,12 @@ const QuizPage = ({ quizState, handleReturnHomePage }: quizPageProps) => {
       isTimeout.current = !isTimeout.current;
     }, 500);
     isTimeout.current = !isTimeout.current;
-    console.log(isTimeout.current);
   }
   function handleReset() {
     setTimeout(() => {
       isReset.current = !isReset.current;
     }, 500);
     isReset.current = !isReset.current;
-    console.log(isReset.current);
 
     //isReset.current = !isReset.current;
   }
@@ -125,7 +123,7 @@ const QuizPage = ({ quizState, handleReturnHomePage }: quizPageProps) => {
             </p>
           </header>
           <main className="py-10">
-            <article>
+            <article className="flex flex-col items-center">
               <Timer
                 count={parseInt(quizState.time)}
                 handleTimeout={handleTimeout}
@@ -135,10 +133,10 @@ const QuizPage = ({ quizState, handleReturnHomePage }: quizPageProps) => {
                 handleReset={handleReset}
                 updateTimeout={updateTimeout}
               />
-              <p>
+              <p className="text-lg">
                 Question: {currQuestionCounter}/{quizState.amount}
               </p>
-              <p>
+              <p className="text-center my-4 text-lg">
                 {quizSetUpData
                   ? quizSetUpData[currQuestionCounter - 1].question
                   : ""}

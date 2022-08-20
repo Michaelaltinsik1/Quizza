@@ -17,24 +17,6 @@ const Timer = ({
   updateTimeout,
 }: TimerProps) => {
   const [counter, setCounter] = useState(count);
-  console.log("rerender");
-  // if (counter === 0 && counter < currQuestionCounter) {
-  //   //resets timer on timeout
-  //   console.log("timeout");
-  //   setTimeout(() => {
-  //     handleReset();
-  //     handleTimeout();
-  //     resetCounter();
-  //   }, 50);
-  // }
-  // if (isReset.current) {
-  //   // handles onclick timer reset
-  //   console.log("2");
-  //   setTimeout(() => {
-  //     //resetCounter();
-  //     //handleReset();
-  //   }, 50);
-  // }
 
   function resetCounter() {
     setCounter(count);
@@ -48,15 +30,11 @@ const Timer = ({
     return () => clearInterval(interval);
   }, [counter]);
   useEffect(() => {
-    // console.log("run useEffect");
     if (isReset.current) {
       handleReset();
       resetCounter();
     }
     if (counter === 0 && counter < currQuestionCounter) {
-      //resets timer on timeout
-      console.log("timeout");
-
       updateTimeout();
       setTimeout(() => {
         updateTimeout();
@@ -66,7 +44,11 @@ const Timer = ({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [counter]);
-  return <p>{counter}</p>;
+  return (
+    <div className="flex items-center justify-center p-4 border-2 rounded-full w-16 h-16 mb-8 border-neutral-900">
+      <p className="p-4 text-2xl">{counter}</p>
+    </div>
+  );
 };
 
 export default Timer;

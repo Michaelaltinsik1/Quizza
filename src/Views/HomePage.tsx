@@ -87,7 +87,7 @@ const HomePage = ({ getQuizState }: homePageProps) => {
         />
         <button
           type="submit"
-          className="py-2 px-6 border border-black rounded-xl"
+          className="py-2 px-6 border border-black rounded-xl m-4"
           onClick={validateForm}
         >
           Submit
