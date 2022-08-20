@@ -1,8 +1,9 @@
 import { quizType } from "../interfaces";
 import AnswerOptionsList from "../Components/AnswerOptionsList";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import Timer from "../Components/timer";
+import GameOver from "../Components/GameOverComponent";
 interface quizPageProps {
   quizState: quizType;
   handleReturnHomePage: Function;
@@ -13,25 +14,35 @@ interface quizSetupDataType {
   question: string;
 }
 const QuizPage = ({ quizState, handleReturnHomePage }: quizPageProps) => {
+  // const [currCorrectAnswersCounter, setCurrCorrectAnswersCounter] =
+  //   useState<number>(0);
+
+  const currCorrectAnswersCounter = useRef<number>(0);
   const [isGameOver, setGameOver] = useState<boolean>(false);
-  const [isReset, setReset] = useState<boolean>(false);
+  // const [isReset, setReset] = useState<boolean>(false);
+  const isReset = useRef<boolean>(false);
+  const isTimeout = useRef<boolean>(false);
   const [currQuestionCounter, incrementQuestionCounter] = useState<number>(1);
   const [quizSetUpData, setQuizSetupData] =
     useState<Array<quizSetupDataType> | null>(null);
 
   function clearStateForNewRound() {
     setGameOver(false);
-    setReset(false);
+    //setReset(false);
+    isReset.current = false;
     incrementQuestionCounter(1);
+    currCorrectAnswersCounter.current = 0;
   }
-
+  function incrementCurrCorrectAnswersCounter() {
+    //setCurrCorrectAnswersCounter((prevState) => prevState + 1);
+    currCorrectAnswersCounter.current = currCorrectAnswersCounter.current + 1;
+  }
   function handleReturn() {
     clearStateForNewRound();
     handleReturnHomePage();
   }
   function updateQuestionCounter() {
     let tempCounter = currQuestionCounter + 1;
-    console.log(tempCounter);
     if (currQuestionCounter < parseInt(quizState.amount)) {
       incrementQuestionCounter(() => currQuestionCounter + 1);
     }
@@ -42,10 +53,23 @@ const QuizPage = ({ quizState, handleReturnHomePage }: quizPageProps) => {
   function handleTimeout() {
     setTimeout(() => {
       updateQuestionCounter();
-    }, 50);
+    }, 500);
+  }
+  function updateTimeout() {
+    setTimeout(() => {
+      isTimeout.current = !isTimeout.current;
+    }, 500);
+    isTimeout.current = !isTimeout.current;
+    console.log(isTimeout.current);
   }
   function handleReset() {
-    setReset((prevState) => !prevState);
+    setTimeout(() => {
+      isReset.current = !isReset.current;
+    }, 500);
+    isReset.current = !isReset.current;
+    console.log(isReset.current);
+
+    //isReset.current = !isReset.current;
   }
   useEffect(() => {
     const fetchData = async () => {
@@ -65,7 +89,6 @@ const QuizPage = ({ quizState, handleReturnHomePage }: quizPageProps) => {
             };
             return tempStorage;
           });
-          console.log(tempStorage);
           setQuizSetupData(tempStorage);
         };
         if (quizState.difficulty.toLocaleLowerCase() !== "none") {
@@ -83,23 +106,12 @@ const QuizPage = ({ quizState, handleReturnHomePage }: quizPageProps) => {
           );
           iterate(data);
         }
-
-        // tempStorage = data.map((item: any) => {
-        //   let tempStorage: quizSetupDataType;
-        //   tempStorage = {
-        //     correctAnswer: item.correctAnswer,
-        //     incorrectAnswers: item.incorrectAnswers,
-        //     question: item.question,
-        //   };
-        //   return tempStorage;
-        // });
-        // console.log(tempStorage);
-        // setQuizSetupData(tempStorage);
       } catch {
         //setQuizSetupData(() => null);
       }
     };
     fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -119,7 +131,9 @@ const QuizPage = ({ quizState, handleReturnHomePage }: quizPageProps) => {
                 handleTimeout={handleTimeout}
                 currQuestionCounter={currQuestionCounter}
                 isReset={isReset}
+                isTimeout={isTimeout}
                 handleReset={handleReset}
+                updateTimeout={updateTimeout}
               />
               <p>
                 Question: {currQuestionCounter}/{quizState.amount}
@@ -131,7 +145,6 @@ const QuizPage = ({ quizState, handleReturnHomePage }: quizPageProps) => {
               </p>
             </article>
             <article>
-              {/* {quizSetUpData ? quizSetUpData.map((item : quizSetupDataType) => <AnswerOption/> )} */}
               {quizSetUpData && (
                 <AnswerOptionsList
                   AnswerOptions={[
@@ -143,32 +156,23 @@ const QuizPage = ({ quizState, handleReturnHomePage }: quizPageProps) => {
                   }
                   updateQuestionCounter={updateQuestionCounter}
                   handleReset={handleReset}
+                  incrementCurrCorrectAnswersCounter={
+                    incrementCurrCorrectAnswersCounter
+                  }
+                  isReset={isReset}
+                  isTimeout={isTimeout}
                 />
               )}
             </article>
           </main>
         </div>
       ) : (
-        <section className="flex flex-col max-w-md justify-between p-6 items-center mt-10">
-          <article className="flex flex-col">
-            <h1>Congrats</h1>
-            <p>Your score was 5/{quizState.amount}</p>
-          </article>
-          <article className="flex mt-6">
-            <button
-              onClick={clearStateForNewRound}
-              className="flex items-center justify-center text-center p-6 border-2 border-black rounded-md px-2 py-2 m-2"
-            >
-              Play Again
-            </button>
-            <button
-              onClick={handleReturn}
-              className="flex items-center justify-center text-center p-6 border-2 border-black rounded-md px-2 py-2 m-2"
-            >
-              Return
-            </button>
-          </article>
-        </section>
+        <GameOver
+          quizState={quizState}
+          currCorrectAnswersCounter={currCorrectAnswersCounter}
+          clearStateForNewRound={clearStateForNewRound}
+          handleReturn={handleReturn}
+        />
       )}
     </>
   );

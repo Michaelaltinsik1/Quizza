@@ -5,6 +5,9 @@ interface AnswerProps {
   correctAnswer: string;
   updateQuestionCounter: Function;
   handleReset: Function;
+  isReset: React.MutableRefObject<boolean>;
+  isTimeout: React.MutableRefObject<boolean>;
+  incrementCurrCorrectAnswersCounter: Function;
 }
 
 const AnswerOptionsList = ({
@@ -12,10 +15,12 @@ const AnswerOptionsList = ({
   correctAnswer,
   updateQuestionCounter,
   handleReset,
+  incrementCurrCorrectAnswersCounter,
+  isReset,
+  isTimeout,
 }: AnswerProps) => {
   const [isClicked, setClicked] = useState(false);
   const shuffleArray = (array: Array<string>) => {
-    console.log("ran");
     for (let i = array.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       const temp = array[i];
@@ -26,7 +31,10 @@ const AnswerOptionsList = ({
   if (!isClicked) {
     shuffleArray(AnswerOptions);
   }
-  function handleClick() {
+  function handleClick(item: string) {
+    if (correctAnswer === item) {
+      incrementCurrCorrectAnswersCounter();
+    }
     handleReset();
     setClicked(() => true);
     setTimeout(() => {
@@ -42,6 +50,8 @@ const AnswerOptionsList = ({
           correctAnswer={correctAnswer}
           handleClick={handleClick}
           isClicked={isClicked}
+          isTimeout={isTimeout}
+          isReset={isReset}
         >
           {item}
         </AnswerOption>

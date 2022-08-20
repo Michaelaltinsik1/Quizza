@@ -20,7 +20,7 @@ const DropDown = ({ options, category, handleChange }: DropDownProps) => {
       categoryKey = "difficulty";
       break;
     default:
-      console.log("none");
+      categoryKey = "";
   }
 
   return (

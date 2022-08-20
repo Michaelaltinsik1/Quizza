@@ -3,8 +3,10 @@ interface TimerProps {
   count: number;
   handleTimeout: Function;
   currQuestionCounter: number;
-  isReset: boolean;
+  isReset: React.MutableRefObject<boolean>;
+  isTimeout: React.MutableRefObject<boolean>;
   handleReset: Function;
+  updateTimeout: Function;
 }
 const Timer = ({
   count,
@@ -12,15 +14,26 @@ const Timer = ({
   currQuestionCounter,
   isReset,
   handleReset,
+  updateTimeout,
 }: TimerProps) => {
   const [counter, setCounter] = useState(count);
-  if (counter === 0 && counter < currQuestionCounter) {
-    resetCounter();
-    handleTimeout();
-  }
-  // if (isReset) {
-  //   handleReset();
-  //   resetCounter();
+  console.log("rerender");
+  // if (counter === 0 && counter < currQuestionCounter) {
+  //   //resets timer on timeout
+  //   console.log("timeout");
+  //   setTimeout(() => {
+  //     handleReset();
+  //     handleTimeout();
+  //     resetCounter();
+  //   }, 50);
+  // }
+  // if (isReset.current) {
+  //   // handles onclick timer reset
+  //   console.log("2");
+  //   setTimeout(() => {
+  //     //resetCounter();
+  //     //handleReset();
+  //   }, 50);
   // }
 
   function resetCounter() {
@@ -35,9 +48,21 @@ const Timer = ({
     return () => clearInterval(interval);
   }, [counter]);
   useEffect(() => {
-    if (isReset) {
+    // console.log("run useEffect");
+    if (isReset.current) {
       handleReset();
       resetCounter();
+    }
+    if (counter === 0 && counter < currQuestionCounter) {
+      //resets timer on timeout
+      console.log("timeout");
+
+      updateTimeout();
+      setTimeout(() => {
+        updateTimeout();
+        handleTimeout();
+        resetCounter();
+      }, 500);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [counter]);
